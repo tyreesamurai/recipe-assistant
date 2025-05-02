@@ -5,7 +5,7 @@ A full-stack recipe-sharing platform where users can create, edit, and view reci
 
 ## 🧪 Tech Stack
 - **Frontend:** Vue.js, Tailwind CSS
-- **Backend:** Go (Gin, Gorm)
+- **Backend:** C# ASP.NET Core
 - **Database:** MySQL
 - **Infrastructure:** Docker, GitHub Actions (CI/CD)
 
