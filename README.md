@@ -54,8 +54,8 @@ To be added once finalized. Will include:
 ## 🚧 Development Roadmap
 
 ### 🧱 Design
-- [x] Define user personas and flows
-- [x] Create rough wireframes
+- [ ] Define user personas and flows
+- [ ] Create rough wireframes
 - [ ] Finalize color palette and layout system
 - [ ] Export mockups and upload to repo
 
