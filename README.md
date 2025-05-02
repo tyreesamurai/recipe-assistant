@@ -92,4 +92,4 @@ This app was inspired by a personal need for better recipe tracking and the frus
 ## 📬 Contact
 
 Want to collaborate or offer feedback?  
-Reach out via [GitHub](https://github.com/YOUR_USERNAME) or open an issue in this repo.
+Reach out via [GitHub](https://github.com/tyreesamurai) or open an issue in this repo.
