@@ -6,8 +6,8 @@ A full-stack recipe-sharing platform where users can create, edit, and view reci
 
 ## 🧪 Tech Stack
 
-- **Frontend:** Next.js, React, Tailwind CSS, Shadcn UI
-- **Backend:** C# ASP.NET Core
+- **Frontend:** Vue.js
+- **Backend:** C# ASP.NET Core & Python Flask
 - **Database:** PostgreSQL
 - **Infrastructure:** Docker, GitHub Actions (CI/CD)
 
@@ -27,10 +27,10 @@ A full-stack recipe-sharing platform where users can create, edit, and view reci
 | Phase      | Description                       | Status         |
 | ---------- | --------------------------------- | -------------- |
 | Design     | Wireframes, DB Schema, API Routes | 🟡 In Progress |
-| Backend    | API endpoints, models, DB logic   | ⚪ Not Started |
-| Frontend   | Pages, forms, layout              | ⚪ Not Started |
-| Testing    | Unit + integration tests          | ⚪ Not Started |
-| Deployment | Docker Compose + Live Hosting     | ⚪ Not Started |
+| Backend    | API endpoints, models, DB logic   | 🟡 In Progress |
+| Frontend   | Pages, forms, layout              | 🟡 In Progress |
+| Testing    | Unit + integration tests          | 🟡 In Progress |
+| Deployment | Docker Compose + Live Hosting     | 🟡 In Progress |
 
 ---
 
