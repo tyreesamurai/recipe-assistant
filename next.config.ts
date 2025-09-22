@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
-const nextConfig = {
+const nextConfig: NextConfig = {
+  basePath: "/recipes",
   output: "standalone",
 };
 
