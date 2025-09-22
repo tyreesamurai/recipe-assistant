@@ -8,30 +8,9 @@ permissions:
   packages: write
 
 jobs:
-  services:
-    strategy:
-      fail-fast: false
-      matrix:
-        svc:
-          - {
-              image: "tyreesamurai/recipes-web",
-              context: "client",
-              dockerfile: "client/Dockerfile",
-            }
-          - {
-              image: "tyreesamurai/recipes-api",
-              context: "server",
-              dockerfile: "server/Dockerfile",
-            }
-          - {
-              image: "tyreesamurai/recipes-parser",
-              context: "parser",
-              dockerfile: "parser/Dockerfile",
-            }
-    uses: tyreesamurai/ci-reusables/.github/workflows/deploy.yml@main
+  deploy:
+    uses: tyreesamurai/ci-templates/.github/workflows/deploy.yml@main
     with:
-      image_name: ${{ matrix.svc.image }}
-      service_dir: /srv/apps/recipes
-      context: ${{ matrix.svc.context }}
-      dockerfile: ${{ matrix.svc.dockerfile }}
+      image_name: tyreesamurai/recipes-web # pushed to ghcr.io/tyreesamurai/recipes-web
+      service_dir: /srv/apps/recipes # where compose.yaml lives on the server
     secrets: inherit
