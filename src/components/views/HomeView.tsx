@@ -1,7 +1,18 @@
-export default function HomeView() {
+import { RecipeCards } from "@/components/RecipeCards";
+import { db } from "@/db/index";
+import { recipesTable } from "@/db/schema";
+import { Recipe } from "@/lib/types";
+
+export async function HomeView() {
+  const recipes = await db.select().from(recipesTable);
+
   return (
-    <main>
-      <h1>This is from the HomeView</h1>
-    </main>
+    <div>
+      <div></div>
+
+      <div>
+        <RecipeCards recipes={recipes as Recipe[]} />
+      </div>
+    </div>
   );
 }
