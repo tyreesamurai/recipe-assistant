@@ -10,7 +10,7 @@ export async function HomeView() {
     <div>
       <div></div>
 
-      <div>
+      <div className="container flex">
         <RecipeCards recipes={recipes as Recipe[]} />
       </div>
     </div>

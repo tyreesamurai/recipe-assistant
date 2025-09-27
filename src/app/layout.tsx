@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -37,8 +37,8 @@ export default function RootLayout({
         >
           {children}
         </ThemeProvider>
+        <Toaster />
       </body>
-      <Toaster />
     </html>
   );
 }

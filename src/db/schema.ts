@@ -4,17 +4,19 @@ import {
   varchar,
   text,
   primaryKey,
-  numeric,
+  doublePrecision,
   jsonb,
   timestamp,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
 export const recipesTable = pgTable("recipes", {
   id: integer().primaryKey().generatedByDefaultAsIdentity(),
   name: varchar({ length: 255 }).notNull(),
   description: varchar({ length: 1000 }),
-  instructions: text().notNull(),
+  instructions: text()
+    .array()
+    .default(sql`ARRAY[]::text[]`),
   cookingTime: jsonb("cooking_times"),
   nutrition: jsonb(),
   servings: integer(),
@@ -47,7 +49,7 @@ export const recipeIngredientsTable = pgTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
-    quantity: numeric({ precision: 10, scale: 2 }),
+    quantity: doublePrecision(),
     unit: varchar({ length: 50 }),
     notes: text(),
   },
