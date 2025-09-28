@@ -8,6 +8,7 @@ import {
   recipeTagsTable,
   ingredientTagsTable,
 } from "@/db/schema";
+import { resumePluginState } from "next/dist/build/build-context";
 
 // Shared
 export const nutritionSchema = z
@@ -23,9 +24,16 @@ export const cookingTimeSchema = z
   .object({
     prep: z.number().min(0).optional(),
     cook: z.number().min(0).optional(),
-    total: z.number().min(0).optional(),
+    cool: z.number().min(0).optional(),
+    additional: z.number().min(0).optional(),
+    rest: z.number().min(0).optional(),
+    total: z.number().min(0),
   })
   .optional();
+
+export type Nutrition = z.infer<typeof nutritionSchema>;
+
+export type CookingTime = z.infer<typeof cookingTimeSchema>;
 
 // ===== SELECT schemas (DB → app)
 export const recipeBase = createSelectSchema(recipesTable);

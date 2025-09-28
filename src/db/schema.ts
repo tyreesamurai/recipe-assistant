@@ -8,6 +8,7 @@ import {
   jsonb,
   timestamp,
 } from "drizzle-orm/pg-core";
+import { Nutrition, CookingTime } from "@/lib/types";
 import { relations, sql } from "drizzle-orm";
 
 export const recipesTable = pgTable("recipes", {
@@ -17,8 +18,8 @@ export const recipesTable = pgTable("recipes", {
   instructions: text()
     .array()
     .default(sql`ARRAY[]::text[]`),
-  cookingTime: jsonb("cooking_times"),
-  nutrition: jsonb(),
+  cookingTime: jsonb("cooking_times").$type<CookingTime>(),
+  nutrition: jsonb().$type<Nutrition>(),
   servings: integer(),
   imageUrl: text("image_url"),
   inputUrl: text("input_url"),
@@ -30,7 +31,7 @@ export const ingredientsTable = pgTable("ingredients", {
   id: integer().primaryKey().generatedByDefaultAsIdentity(),
   name: varchar({ length: 255 }).notNull(),
   description: text(),
-  nutrition: jsonb(),
+  nutrition: jsonb().$type<Nutrition>(),
   imageUrl: text("image_url"),
 });
 
