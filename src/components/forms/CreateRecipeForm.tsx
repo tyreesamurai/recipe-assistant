@@ -14,9 +14,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { insertRecipeSchema } from "@/lib/types";
+import { insertRecipeSchema, insertTagSchema } from "@/lib/types";
 
-const formSchema = insertRecipeSchema.extend({
+export const recipeFormSchema = insertRecipeSchema.extend({
   ingredients: z
     .array(
       z.object({
@@ -26,27 +26,33 @@ const formSchema = insertRecipeSchema.extend({
       }),
     )
     .min(1, "At least one ingredient is required"),
+  tags: z.array(insertTagSchema).optional(),
 });
 
-export function CreateRecipeForm() {
+export function CreateRecipeForm({
+  recipe,
+}: {
+  recipe?: z.infer<typeof recipeFormSchema>;
+}) {
   const form = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(recipeFormSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      instructions: [""],
-      nutrition: {
+      name: recipe?.name || "",
+      description: recipe?.description || "",
+      instructions: recipe?.instructions || [""],
+      nutrition: recipe?.nutrition || {
         calories: 0,
         carbs: 0,
         protein: 0,
         fats: 0,
       },
-      cookingTime: {
+      cookingTime: recipe?.cookingTime || {
         prep: 0,
         cook: 0,
         total: 0,
       },
-      ingredients: [{ name: "", quantity: 0, unit: "" }],
+      ingredients: recipe?.ingredients || [{ name: "", quantity: 0, unit: "" }],
+      tags: recipe?.tags || [{ name: "" }],
     },
   });
 
@@ -84,7 +90,7 @@ export function CreateRecipeForm() {
     removeInstruction(index);
   };
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
+  const onSubmit = (data: z.infer<typeof recipeFormSchema>) => {
     toast.success(JSON.stringify(data, null, 2));
   };
 

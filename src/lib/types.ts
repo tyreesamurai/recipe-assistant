@@ -8,7 +8,6 @@ import {
   recipeTagsTable,
   ingredientTagsTable,
 } from "@/db/schema";
-import { resumePluginState } from "next/dist/build/build-context";
 
 // Shared
 export const nutritionSchema = z
@@ -65,9 +64,10 @@ export const insertTagSchema = createInsertSchema(tagsTable)
   .extend({ name: z.string().trim().min(1).max(100) });
 
 export const insertIngredientSchema = createInsertSchema(ingredientsTable)
-  .omit({})
+  .omit({ id: true })
   .extend({
     name: z.string().trim().min(1).max(255),
+    description: z.string().max(1000).optional(),
     imageUrl: z.string().url().optional(),
     nutrition: nutritionSchema,
   });
