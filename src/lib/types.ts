@@ -12,27 +12,39 @@ import {
 // Shared
 export const nutritionSchema = z
   .object({
-    calories: z.number().min(0).optional(),
-    carbs: z.number().min(0).optional(),
-    fats: z.number().min(0).optional(),
-    protein: z.number().min(0).optional(),
+    calories: z.coerce.number().min(0).optional(),
+    carbs: z.coerce.number().min(0).optional(),
+    fats: z.coerce.number().min(0).optional(),
+    protein: z.coerce.number().min(0).optional(),
   })
   .optional();
 
 export const cookingTimeSchema = z
   .object({
-    prep: z.number().min(0).optional(),
-    cook: z.number().min(0).optional(),
-    cool: z.number().min(0).optional(),
-    additional: z.number().min(0).optional(),
-    rest: z.number().min(0).optional(),
-    total: z.number().min(0),
+    prep: z.coerce.number().min(0).optional(),
+    cook: z.coerce.number().min(0).optional(),
+    cool: z.coerce.number().min(0).optional(),
+    additional: z.coerce.number().min(0).optional(),
+    rest: z.coerce.number().min(0).optional(),
+    total: z.coerce.number().min(0),
   })
   .optional();
 
-export type Nutrition = z.infer<typeof nutritionSchema>;
+export type Nutrition = {
+  calories?: number;
+  carbs?: number;
+  protein?: number;
+  fats?: number;
+};
 
-export type CookingTime = z.infer<typeof cookingTimeSchema>;
+export type CookingTime = {
+  prep?: number;
+  cook?: number;
+  cool?: number;
+  additional?: number;
+  rest?: number;
+  total: number;
+};
 
 // ===== SELECT schemas (DB → app)
 export const recipeBase = createSelectSchema(recipesTable);
@@ -42,7 +54,7 @@ export const tagBase = createSelectSchema(tagsTable);
 export const ingredientSchema = ingredientBase.extend({
   tags: z.array(tagBase).optional(),
   nutrition: nutritionSchema,
-  quantity: z.number().min(0).optional(), // present only when joined via recipe_ingredients
+  quantity: z.coerce.number().min(0).optional(), // present only when joined via recipe_ingredients
   unit: z.string().max(50).optional(),
 });
 
@@ -63,38 +75,15 @@ export const insertTagSchema = createInsertSchema(tagsTable)
   .omit({ id: true })
   .extend({ name: z.string().trim().min(1).max(100) });
 
-export const insertIngredientSchema = createInsertSchema(ingredientsTable)
-  .omit({ id: true })
-  .extend({
-    name: z.string().trim().min(1).max(255),
-    description: z.string().max(1000).optional(),
-    imageUrl: z.string().url().optional(),
-    nutrition: nutritionSchema,
-  });
+export const insertIngredientSchema = createInsertSchema(ingredientsTable).omit(
+  { id: true },
+);
 
-export const insertRecipeSchema = createInsertSchema(recipesTable)
-  .omit({ id: true, createdAt: true, updatedAt: true })
-  .extend({
-    name: z.string().trim().min(1).max(255),
-    description: z.string().max(1000).optional(),
-    // Form can send multi-line string → normalize to string[]
-    instructions: z
-      .union([
-        z.array(z.string().min(1)),
-        z.string().transform((s) =>
-          s
-            .split("\n")
-            .map((x) => x.trim())
-            .filter(Boolean),
-        ),
-      ])
-      .default([]),
-    servings: z.coerce.number().int().positive().optional(),
-    imageUrl: z.string().url().optional(),
-    inputUrl: z.string().url().optional(),
-    nutrition: nutritionSchema,
-    cookingTime: cookingTimeSchema,
-  });
+export const insertRecipeSchema = createInsertSchema(recipesTable).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
 
 export const insertRecipeIngredientSchema = createInsertSchema(
   recipeIngredientsTable,

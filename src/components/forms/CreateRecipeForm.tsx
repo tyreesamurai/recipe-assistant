@@ -1,6 +1,5 @@
 "use client";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,7 +20,7 @@ export const recipeFormSchema = insertRecipeSchema.extend({
     .array(
       z.object({
         name: z.string().min(1),
-        quantity: z.number().min(0).optional(),
+        quantity: z.coerce.number().min(0).optional(),
         unit: z.string().max(50).optional(),
       }),
     )
@@ -34,25 +33,27 @@ export function CreateRecipeForm({
 }: {
   recipe?: z.infer<typeof recipeFormSchema>;
 }) {
-  const form = useForm({
-    resolver: zodResolver(recipeFormSchema),
+  const form = useForm<z.infer<typeof recipeFormSchema>>({
     defaultValues: {
-      name: recipe?.name || "",
-      description: recipe?.description || "",
-      instructions: recipe?.instructions || [""],
-      nutrition: recipe?.nutrition || {
+      name: recipe?.name ?? "",
+      description: recipe?.description ?? "",
+      instructions:
+        Array.isArray(recipe?.instructions) && recipe!.instructions.length > 0
+          ? recipe!.instructions
+          : [""],
+      nutrition: recipe?.nutrition ?? {
         calories: 0,
         carbs: 0,
         protein: 0,
         fats: 0,
       },
-      cookingTime: recipe?.cookingTime || {
+      cookingTime: recipe?.cookingTime ?? {
         prep: 0,
         cook: 0,
         total: 0,
       },
-      ingredients: recipe?.ingredients || [{ name: "", quantity: 0, unit: "" }],
-      tags: recipe?.tags || [{ name: "" }],
+      ingredients: recipe?.ingredients ?? [{ name: "", quantity: 0, unit: "" }],
+      tags: recipe?.tags ?? [{ name: "" }],
     },
   });
 
@@ -82,6 +83,10 @@ export function CreateRecipeForm({
     name: "instructions",
   } as never);
 
+  if (instructionFields.length === 0) {
+    appendInstruction(""); // ensure one row to render
+  }
+
   const handleAddInstruction = () => {
     appendInstruction("");
   };
@@ -91,6 +96,31 @@ export function CreateRecipeForm({
   };
 
   const onSubmit = (data: z.infer<typeof recipeFormSchema>) => {
+    data = {
+      ...data,
+      description: data.description?.trim() ? data.description : null,
+      instructions:
+        data.instructions && data.instructions.some((i) => i.trim())
+          ? data.instructions.filter((i) => i.trim())
+          : null,
+      nutrition:
+        data.nutrition && Object.values(data.nutrition).some((v) => v && v > 0)
+          ? data.nutrition
+          : null,
+      cookingTime:
+        data.cookingTime &&
+        Object.values(data.cookingTime).some((v) => v && v > 0)
+          ? data.cookingTime
+          : null,
+      ingredients: data.ingredients
+        .filter((i) => i.name.trim() !== "")
+        .map((i) => ({
+          ...i,
+          quantity: i.quantity && i.quantity > 0 ? i.quantity : null,
+          unit: i.unit?.trim() ? i.unit : null,
+        })),
+      tags: data.tags?.filter((t) => t.name.trim() !== "") ?? null,
+    };
     toast.success(JSON.stringify(data, null, 2));
   };
 
@@ -119,7 +149,7 @@ export function CreateRecipeForm({
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Textarea {...field} />
+                  <Textarea {...field} value={field.value ?? ""} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -131,13 +161,13 @@ export function CreateRecipeForm({
             {instructionFields.map((field, index) => (
               <FormField
                 key={field.id}
-                name={`instructions.${index}` as const}
+                name={`instructions.${index}`}
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Instruction {index + 1}</FormLabel>
                     <FormControl>
-                      <Textarea {...field} /> {/* ← use the provided field */}
+                      <Textarea {...field} />
                     </FormControl>
                     <FormMessage />
                     {index === instructionFields.length - 1 && (
@@ -262,37 +292,27 @@ export function CreateRecipeForm({
             {ingredientFields.map((field, index) => (
               <div className="flex justify-between " key={field.id}>
                 <FormField
-                  name={`ingredients.${index}.name` as const}
-                  render={() => (
+                  name={`ingredients.${index}.name`}
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Ingredient {index + 1}</FormLabel>
                       <FormControl>
-                        <Input
-                          type="text"
-                          placeholder="Name"
-                          {...form.register(
-                            `ingredients.${index}.name` as const,
-                            { required: true },
-                          )}
-                        />
+                        <Input type="text" placeholder="Name" {...field} />
                       </FormControl>
                     </FormItem>
                   )}
                 />
 
                 <FormField
-                  name={`ingredients.${index}.quantity` as const}
-                  render={() => (
+                  name={`ingredients.${index}.quantity`}
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Quantity</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           placeholder="Quantity"
-                          {...(form.register(
-                            `ingredients.${index}.quantity` as const,
-                          ),
-                          { required: false })}
+                          {...field}
                         />
                       </FormControl>
                     </FormItem>
@@ -301,18 +321,11 @@ export function CreateRecipeForm({
 
                 <FormField
                   name={`ingredients.${index}.unit` as const}
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Unit</FormLabel>
                       <FormControl>
-                        <Input
-                          type="text"
-                          placeholder="Unit"
-                          {...(form.register(
-                            `ingredients.${index}.unit` as const,
-                          ),
-                          { required: false })}
-                        />
+                        <Input type="text" placeholder="Unit" {...field} />
                       </FormControl>
                     </FormItem>
                   )}
