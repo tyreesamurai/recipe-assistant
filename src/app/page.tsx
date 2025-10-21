@@ -1,9 +1,9 @@
 import { HomeView } from "@/components/views/HomeView";
 
 export default function Home() {
-  return (
-    <main>
-      <HomeView />
-    </main>
-  );
+	return (
+		<main>
+			<HomeView />
+		</main>
+	);
 }

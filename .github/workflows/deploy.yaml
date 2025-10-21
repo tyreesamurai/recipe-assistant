@@ -11,6 +11,11 @@ jobs:
   deploy:
     uses: tyreesamurai/ci-templates/.github/workflows/deploy.yml@main
     with:
-      image_name: tyreesamurai/recipes-web # pushed to ghcr.io/tyreesamurai/recipes-web
-      service_dir: /srv/apps/recipes # where compose.yaml lives on the server
+      image_name: tyreesamurai/recipes
+      context: .
+      dockerfile: Dockerfile
+      namespace: recipes
+      deployment: recipes
+      kube_context: k3d-home
+      secret_name: recipes-env
     secrets: inherit
